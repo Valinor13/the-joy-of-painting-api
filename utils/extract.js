@@ -26,18 +26,32 @@ async function dataCollect() {
         .pipe(csv({ separator: ',' }))
         .on('data', (dataRow) => {
             delete dataRow[''];
+            let colorStr = '{';
+            let hexStr = '{';
             dataRow.colors = dataRow.colors.slice(2, dataRow.colors.length - 2);
             dataRow.colors = dataRow.colors.split(', ');
             for (let i = 0; i < dataRow.colors.length; i++) {
                 dataRow.colors[i] = dataRow.colors[i].replace(/'/gi, '');
                 dataRow.colors[i] = dataRow.colors[i].replace(/\\r/gi, '');
                 dataRow.colors[i] = dataRow.colors[i].replace(/\\n/gi, '');
+                colorStr = colorStr + dataRow.colors[i];
+                if (i < dataRow.colors.length - 1) {
+                    colorStr = colorStr + ', ';
+                }
             }
+            colorStr = colorStr + '}'
+            dataRow.colors = colorStr;
             dataRow['color_hex'] = dataRow['color_hex'].slice(2, dataRow['color_hex'].length - 2);
             dataRow['color_hex'] = dataRow['color_hex'].split(', ');
             for (let i = 0; i < dataRow['color_hex'].length; i++) {
                 dataRow['color_hex'][i] = dataRow['color_hex'][i].replace(/'/gi, '');
+                hexStr = hexStr + dataRow['color_hex'][i];
+                if (i < dataRow['color_hex'].length - 1) {
+                    hexStr = hexStr + ', ';
+                }
             }
+            hexStr = hexStr + '}';
+            dataRow['color_hex'] = hexStr;
             Colors.push(dataRow);
         });
 
@@ -45,13 +59,21 @@ async function dataCollect() {
         .pipe(csv({ separator: ',' }))
         .on('data', (dataRow) => {
             const subList = [];
+            let subStr = '{';
             dataRow.TITLE = dataRow.TITLE.slice(1, dataRow.TITLE.length - 1);
             Object.keys(dataRow).forEach((key) => {
                 if (dataRow[key] === '1') {
                     subList.push(key.toLowerCase());
                 }
             });
-            dataRow.SUBJECTS = subList;
+            for (let i = 0; i < subList.length; i++) {
+                subStr = subStr + subList[i];
+                if (i < subList.length - 1) {
+                    subStr = subStr + ', ';
+                }
+            }
+            subStr = subStr + '}';
+            dataRow.SUBJECTS = subStr;
             Subjects.push(dataRow);
         });
 
@@ -61,7 +83,7 @@ async function dataCollect() {
             epDates.push(Object.values(dataRow)[0]);
         });
 
-    setTimeout(() => {
+    setTimeout(async () => {
         epDates.forEach((ep) => {
             const [title, other] = ep.split('(');
             const [date, guest] = other.split(')');
@@ -87,10 +109,10 @@ async function dataCollect() {
                 episode.guest = episodesDatesGuests[i][2];
             }
             let values = [`${episode.paintingIdx}`, `${episode.title}`, `${episode.season}`, `${episode.episodeNum}`, `${episode.date}`, `${episode.src}`, `${episode.youtubeSrc}`, `${episode.guest}`, `${episode.colors}`, `${episode.colorHex}`, `${episode.subjects}`];
-            client.query(process.env.TEXT, values);
+            await client.query(process.env.TEXT, values);
             Episodes.push(episode);
         }
-        console.log(Episodes[0]);
+        client.end();
     }, 100)
 };
 
