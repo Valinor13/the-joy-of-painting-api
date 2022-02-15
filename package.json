@@ -1,0 +1,25 @@
+{
+  "name": "the-joy-of-painting-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Valinor13/the-joy-of-painting-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Valinor13/the-joy-of-painting-api/issues"
+  },
+  "homepage": "https://github.com/Valinor13/the-joy-of-painting-api#readme",
+  "dependencies": {
+    "csv-parser": "^3.0.0",
+    "dotenv": "^16.0.0",
+    "pg": "^8.7.3"
+  }
+}
