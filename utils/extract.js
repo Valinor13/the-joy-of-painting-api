@@ -17,7 +17,7 @@ const client = new Client({
     port: process.env.PORT,
 });
 
-async function dataCollect() {
+(async () => {
     await client.connect();
 
     client.query(process.env.CREATETABLE);
@@ -114,6 +114,4 @@ async function dataCollect() {
         }
         client.end();
     }, 100)
-};
-
-dataCollect();
+})();
